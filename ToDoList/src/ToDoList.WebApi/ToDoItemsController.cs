@@ -16,14 +16,14 @@ public class ToDoItemsController : ControllerBase
         return Ok(); // kód 200
     }
 
-    [HttpGet]
+    [HttpGet] // api/ToDoITems/ GET
     public IActionResult Read()
     {
         return Ok();
     }
 
-    [HttpGet("{toDoItemId:int}")]
-    public IActionResult ReadById(int toDoItemId, [FromBody] ToDoItemUpdateRequestDto request)
+    [HttpGet("{toDoItemId:int}")] // api/ToDoITems/<id> GET
+    public IActionResult ReadById(int toDoItemId)
     {
         try
         {
@@ -37,14 +37,14 @@ public class ToDoItemsController : ControllerBase
         return Ok();
     }
 
-    [HttpPut]
-    public IActionResult UpdateById()
+    [HttpPut("{toDoItemId:int}")]
+    public IActionResult UpdateById(int toDoItemId, [FromBody] ToDoItemUpdateRequestDto request)
     {
         return Ok();
     }
 
-    [HttpDelete]
-    public IActionResult DeleteById()
+    [HttpDelete("{toDoItemId:int}")]
+    public IActionResult DeleteById(int toDoItemId)
     {
         return Ok();
     }
