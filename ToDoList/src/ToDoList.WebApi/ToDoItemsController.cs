@@ -13,22 +13,14 @@ public class ToDoItemsController : ControllerBase
     [HttpPost]
     public IActionResult Create(ToDoItemCreateRequestDto request) // použijeme DTO - Data Transfer Object
     {
-        try
-        {
-            var item = request.ToDomain();
+        var item = request.ToDomain();
 
-            item.ToDoItemId = items.Count == 0 ? 1 : items.Max(i => i.ToDoItemId) + 1;
-            items.Add(item);
+        item.ToDoItemId = items.Count == 0 ? 1 : items.Max(i => i.ToDoItemId) + 1;
+        items.Add(item);
 
 
-            return CreatedAtAction(nameof(ReadById), new { toDoItemId = item.ToDoItemId },
-                    ToDoItemGetResponseDto.FromDomain(item));
-        }
-
-        catch (Exception ex)
-        {
-            return Problem(ex.Message, null, StatusCodes.Status500InternalServerError); //500
-        }
+        return CreatedAtAction(nameof(ReadById), new { toDoItemId = item.ToDoItemId },
+               ToDoItemGetResponseDto.FromDomain(item));
     }
 
     [HttpGet] // api/ToDoITems/ GET
@@ -55,23 +47,15 @@ public class ToDoItemsController : ControllerBase
     [HttpGet("{toDoItemId:int}")] // api/ToDoITems/<id> GET
     public IActionResult ReadById(int toDoItemId)
     {
-        try
+
+        ToDoItem? item = items.Find(i => i.ToDoItemId == toDoItemId);
+
+        if (item != null)
         {
-            ToDoItem? item = items.Find(i => i.ToDoItemId == toDoItemId);
-
-            if (item != null)
-            {
-                return Ok(ToDoItemGetResponseDto.FromDomain(item));
-            }
-
-            return NotFound();
+            return Ok(ToDoItemGetResponseDto.FromDomain(item));
         }
 
-        catch (Exception ex)
-        {
-            return Problem(ex.Message, null, StatusCodes.Status500InternalServerError); //500
-        }
-
+        return NotFound();
     }
 
     [HttpPut("{toDoItemId:int}")]
