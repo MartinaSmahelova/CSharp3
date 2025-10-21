@@ -11,7 +11,7 @@ public class ToDoItemsController : ControllerBase
     private static readonly List<ToDoItem> items = [];
 
     [HttpPost]
-    public IActionResult Create(ToDoItemCreateRequestDto request) // použijeme DTO - Data Transfer Object
+    public ActionResult<ToDoItemGetResponseDto> Create(ToDoItemCreateRequestDto request) // použijeme DTO - Data Transfer Object
     {
         var item = request.ToDomain();
 
@@ -19,12 +19,11 @@ public class ToDoItemsController : ControllerBase
         items.Add(item);
 
 
-        return CreatedAtAction(nameof(ReadById), new { toDoItemId = item.ToDoItemId },
-               ToDoItemGetResponseDto.FromDomain(item));
+        return CreatedAtAction(nameof(ReadById), new { toDoItemId = item.ToDoItemId }, ToDoItemGetResponseDto.FromDomain(item));
     }
 
     [HttpGet] // api/ToDoITems/ GET
-    public IActionResult Read()
+    public ActionResult<IEnumerable<ToDoItemGetResponseDto>> Read()
     {
         try
         {
@@ -45,7 +44,7 @@ public class ToDoItemsController : ControllerBase
     }
 
     [HttpGet("{toDoItemId:int}")] // api/ToDoITems/<id> GET
-    public IActionResult ReadById(int toDoItemId)
+    public ActionResult<ToDoItemGetResponseDto> ReadById(int toDoItemId)
     {
 
         ToDoItem? item = items.Find(i => i.ToDoItemId == toDoItemId);
@@ -59,7 +58,7 @@ public class ToDoItemsController : ControllerBase
     }
 
     [HttpPut("{toDoItemId:int}")]
-    public IActionResult UpdateById(int toDoItemId, [FromBody] ToDoItemUpdateRequestDto request)
+    public ActionResult<ToDoItemGetResponseDto> UpdateById(int toDoItemId, [FromBody] ToDoItemUpdateRequestDto request)
     {
         try
         {
@@ -72,9 +71,12 @@ public class ToDoItemsController : ControllerBase
 
                 int index = items.FindIndex(i => i.ToDoItemId == toDoItemId);
                 items[index] = updatedItem;
+
+                return NoContent();
             }
 
-            return NoContent();
+            return NotFound();
+
         }
 
         catch (Exception ex)
@@ -84,9 +86,9 @@ public class ToDoItemsController : ControllerBase
     }
 
     [HttpDelete("{toDoItemId:int}")]
-    public IActionResult DeleteById(int toDoItemId)
+    public ActionResult<ToDoItemGetResponseDto> DeleteById(int toDoItemId)
     {
-         try
+        try
         {
             ToDoItem? item = items.Find(i => i.ToDoItemId == toDoItemId);
 
@@ -105,4 +107,6 @@ public class ToDoItemsController : ControllerBase
             return Problem(ex.Message, null, StatusCodes.Status500InternalServerError); //500
         }
     }
+
+    public void AddItemToStorage(ToDoItem item) => items.Add(item);
 }
