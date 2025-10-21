@@ -66,7 +66,7 @@ public class ToDoItemsController : ControllerBase
 
             if (itemToUpdate != null)
             {
-                ToDoItem updatedItem = request.ToDomain;
+                ToDoItem updatedItem = request.ToDomain();
                 updatedItem.ToDoItemId = toDoItemId;
 
                 int index = items.FindIndex(i => i.ToDoItemId == toDoItemId);
